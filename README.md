@@ -1,2 +1,4 @@
-# web-425
-web 425
+# Web 425 Angular with TypeScript
+## Contributors
+* Melissa Lutz
+* Richard Krasso
