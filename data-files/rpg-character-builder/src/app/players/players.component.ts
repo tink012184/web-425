@@ -68,8 +68,9 @@ export class PlayersComponent {
     { name: 'Garruk', gender: 'Male', class: 'Warrior', faction: 'The Iron Brotherhood', startingLocation: 'Frostfall', funFact: 'Won 30 arm-wrestling matches.' },
     { name: 'Iris', gender: 'Female', class: 'Mage', faction: 'The Arcane Order', startingLocation: 'Skypier', funFact: 'Paints with starlight.' },
     { name: 'Vale', gender: 'Other', class: 'Rogue', faction: 'The Silent Knives', startingLocation: 'Market Row', funFact: 'Never leaves footprints.' },
-    { name: 'Rowan', gender: 'Male', class: 'Warrior', faction: 'The Iron Brotherhood', startingLocation: 'Redgate', funFact: 'Collects enemy banners.' },
-    { name: 'Elowen', gender: 'Female', class: 'Druid', faction: "The Nature's Guardians", startingLocation: 'Evershade Grove', funFact: 'Communes daily with the ancient trees.' }
+    { name: 'Elowen', gender: 'Female', class: 'Druid', faction: "The Nature's Guardians", startingLocation: 'Evershade Grove', funFact: 'Communes daily with the ancient trees.' },
+      { name: 'Thalor', gender: 'Male', class: 'Druid', faction: "The Nature's Guardians", startingLocation: 'Whisperwind Glade', funFact: 'Can summon roots to entangle his foes during combat.' },
+  { name: 'Maris', gender: 'Other', class: 'Druid', faction: "The Nature's Guardians", startingLocation: 'Silvermist Hollow', funFact: 'Tends to wounded creatures and can heal plants with song.' }
   ];
 
   /** Keeps track of which card is open */
