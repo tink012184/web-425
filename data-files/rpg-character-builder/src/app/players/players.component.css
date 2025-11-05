@@ -80,6 +80,11 @@
   box-shadow: 0 0 15px rgba(66, 255, 150, 0.3);
 }
 
+.druid {
+  background: linear-gradient(145deg, #3e2723, #4caf50);
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.15);
+}
+
 /* Expanded content */
 .card-body {
   padding: 1rem 1rem 1.1rem;
