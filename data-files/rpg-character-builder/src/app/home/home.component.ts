@@ -50,7 +50,7 @@ import { Component } from "@angular/core";
       <figure class="card">
         <img
           src="assets/ClassesGrid.png"
-          alt="Grid of character classes: warrior, rogue, wizard, bard, druid"
+          alt="Grid of character classes: fighter, rogue, wizard, bard, druid"
         />
         <figcaption>
           Pick a path—martial mastery, subtlety and shadow, arcane scholarship,

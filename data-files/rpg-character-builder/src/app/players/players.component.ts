@@ -1,21 +1,21 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { factions } from '../shared/character-factions';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { factions } from "../shared/character-factions";
 
 interface Character {
   name: string;
-  gender: 'Male' | 'Female' | 'Other';
-  class: 'Warrior' | 'Mage' | 'Rogue' | 'Druid';
+  gender: "Male" | "Female" | "Other";
+  class: "Fighter" | "Wizard" | "Rogue" | "Druid";
   faction: string;
   startingLocation: string;
   funFact: string;
 }
 
 @Component({
-  selector: 'app-players',
+  selector: "app-players",
   standalone: true,
   imports: [CommonModule],
-  styleUrls: ['./players.component.css'],
+  styleUrls: ["./players.component.css"],
   template: `
     <section class="players">
       <h2 class="visually-hidden">Players</h2>
@@ -51,7 +51,7 @@ interface Character {
         </div>
       </div>
     </section>
-  `
+  `,
 })
 export class PlayersComponent {
   openIndex: number | null = null;
@@ -59,34 +59,130 @@ export class PlayersComponent {
   readonly factions = factions;
 
   characters: Character[] = [
-    { name: 'Thorn', gender: 'Male', class: 'Warrior', faction: 'The Iron Brotherhood', startingLocation: 'Ironhold', funFact: 'Once single-handedly defeated a dragon.' },
-    { name: 'Lyra', gender: 'Female', class: 'Mage', faction: 'The Arcane Order', startingLocation: 'Moonspire', funFact: 'Memorized 500 arcane runes.' },
-    { name: 'Kestrel', gender: 'Other', class: 'Rogue', faction: 'The Silent Knives', startingLocation: 'Glimmerdeep', funFact: 'Can pick any lock in seconds.' },
-    { name: 'Bram', gender: 'Male', class: 'Warrior', faction: 'The Iron Brotherhood', startingLocation: 'Highwatch', funFact: 'Afraid of chickens.' },
-    { name: 'Seraphine', gender: 'Female', class: 'Mage', faction: 'The Arcane Order', startingLocation: 'Verdance', funFact: 'Brews legendary tea.' },
-    { name: 'Nyx', gender: 'Other', class: 'Rogue', faction: 'The Silent Knives', startingLocation: 'Duskhaven', funFact: 'Speaks twelve dialects.' },
-    { name: 'Garruk', gender: 'Male', class: 'Warrior', faction: 'The Iron Brotherhood', startingLocation: 'Frostfall', funFact: 'Won 30 arm-wrestling matches.' },
-    { name: 'Iris', gender: 'Female', class: 'Mage', faction: 'The Arcane Order', startingLocation: 'Skypier', funFact: 'Paints with starlight.' },
-    { name: 'Vale', gender: 'Other', class: 'Rogue', faction: 'The Silent Knives', startingLocation: 'Market Row', funFact: 'Never leaves footprints.' },
-    { name: 'Elowen', gender: 'Female', class: 'Druid', faction: "The Nature's Guardians", startingLocation: 'Evershade Grove', funFact: 'Communes daily with the ancient trees.' },
-      { name: 'Thalor', gender: 'Male', class: 'Druid', faction: "The Nature's Guardians", startingLocation: 'Whisperwind Glade', funFact: 'Can summon roots to entangle his foes during combat.' },
-  { name: 'Maris', gender: 'Other', class: 'Druid', faction: "The Nature's Guardians", startingLocation: 'Silvermist Hollow', funFact: 'Tends to wounded creatures and can heal plants with song.' }
+    {
+      name: "Thorn",
+      gender: "Male",
+      class: "Fighter",
+      faction: "The Iron Brotherhood",
+      startingLocation: "Ironhold",
+      funFact: "Once single-handedly defeated a dragon.",
+    },
+    {
+      name: "Lyra",
+      gender: "Female",
+      class: "Wizard",
+      faction: "The Arcane Order",
+      startingLocation: "Moonspire",
+      funFact: "Memorized 500 arcane runes.",
+    },
+    {
+      name: "Kestrel",
+      gender: "Other",
+      class: "Rogue",
+      faction: "The Silent Knives",
+      startingLocation: "Glimmerdeep",
+      funFact: "Can pick any lock in seconds.",
+    },
+    {
+      name: "Bram",
+      gender: "Male",
+      class: "Fighter",
+      faction: "The Iron Brotherhood",
+      startingLocation: "Highwatch",
+      funFact: "Afraid of chickens.",
+    },
+    {
+      name: "Seraphine",
+      gender: "Female",
+      class: "Wizard",
+      faction: "The Arcane Order",
+      startingLocation: "Verdance",
+      funFact: "Brews legendary tea.",
+    },
+    {
+      name: "Nyx",
+      gender: "Other",
+      class: "Rogue",
+      faction: "The Silent Knives",
+      startingLocation: "Duskhaven",
+      funFact: "Speaks twelve dialects.",
+    },
+    {
+      name: "Garruk",
+      gender: "Male",
+      class: "Fighter",
+      faction: "The Iron Brotherhood",
+      startingLocation: "Frostfall",
+      funFact: "Won 30 arm-wrestling matches.",
+    },
+    {
+      name: "Iris",
+      gender: "Female",
+      class: "Wizard",
+      faction: "The Arcane Order",
+      startingLocation: "Skypier",
+      funFact: "Paints with starlight.",
+    },
+    {
+      name: "Vale",
+      gender: "Other",
+      class: "Rogue",
+      faction: "The Silent Knives",
+      startingLocation: "Market Row",
+      funFact: "Never leaves footprints.",
+    },
+    {
+      name: "Elowen",
+      gender: "Female",
+      class: "Druid",
+      faction: "The Nature's Guardians",
+      startingLocation: "Evershade Grove",
+      funFact: "Communes daily with the ancient trees.",
+    },
+    {
+      name: "Thalor",
+      gender: "Male",
+      class: "Druid",
+      faction: "The Nature's Guardians",
+      startingLocation: "Whisperwind Glade",
+      funFact: "Can summon roots to entangle his foes during combat.",
+    },
+    {
+      name: "Maris",
+      gender: "Other",
+      class: "Druid",
+      faction: "The Nature's Guardians",
+      startingLocation: "Silvermist Hollow",
+      funFact: "Tends to wounded creatures and can heal plants with song.",
+    },
   ];
 
   /** Keeps track of which card is open */
   open(i: number, ev: MouseEvent) {
     ev.preventDefault();
-    this.openIndex = i;
+
+    // If the same card is already open → close it
+    if (this.openIndex === i) {
+      this.openIndex = null;
+    } else {
+      // Otherwise, open the new one (and close any others)
+      this.openIndex = i;
+    }
   }
 
   /** Adds dynamic color themes */
   getClassColor(charClass: string) {
     switch (charClass) {
-      case 'Warrior': return 'warrior';
-      case 'Mage': return 'mage';
-      case 'Rogue': return 'rogue';
-      case 'Druid': return 'druid';
-      default: return '';
+      case "Fighter":
+        return "fighter";
+      case "Wizard":
+        return "wizard";
+      case "Rogue":
+        return "rogue";
+      case "Druid":
+        return "druid";
+      default:
+        return "";
     }
   }
 
