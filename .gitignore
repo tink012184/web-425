@@ -3,9 +3,13 @@ node_modules
 # Angular
 dist/
 .angular/
-.angular/cache/
-tmp/
-coverage/
+**/node_modules/
+**/dist/
+**/.angular/
+npm-debug.log*
+yarn-debug.log*
+.yarn/
+.cache/
 
 # Development tools
 .vscode
