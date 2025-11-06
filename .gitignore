@@ -1,5 +1,11 @@
 # Node.js folders and files
 node_modules
+# Angular
+dist/
+.angular/
+.angular/cache/
+tmp/
+coverage/
 
 # Development tools
 .vscode
