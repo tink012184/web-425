@@ -18,11 +18,11 @@ interface Character {
   styleUrls: ["./players.component.css"],
   template: `
     <section class="players">
-      <h2 class="visually-hidden">Players</h2>
+      <h2 class="section-title">Premade Characters</h2>
 
       <div class="grid">
         <div class="col" *ngFor="let col of columns; let colIdx = index">
-          <ng-container *ngFor="let c of characters; let i = index">
+          <ng-container *ngFor="let c of premadeCharacters; let i = index">
             <details
               *ngIf="i % 3 === colIdx"
               class="card"
@@ -51,6 +51,42 @@ interface Character {
         </div>
       </div>
     </section>
+
+    <!--  Later this section will show user-created ones -->
+    <section class="players custom">
+      <h2 class="section-title">Custom Characters</h2>
+
+      <p *ngIf="!customCharacters.length" class="placeholder">
+        No custom characters yet. Create your own hero to begin your journey!
+      </p>
+
+      <div class="grid" *ngIf="customCharacters.length">
+        <div class="col" *ngFor="let col of columns; let colIdx = index">
+          <ng-container *ngFor="let c of customCharacters; let i = index">
+            <details
+              *ngIf="i % 3 === colIdx"
+              class="card custom-card"
+              [open]="openIndex === i + premadeCharacters.length"
+            >
+              <summary
+                class="card-summary"
+                [ngClass]="getClassColor(c.class)"
+                (click)="open(i + premadeCharacters.length, $event)"
+              >
+                <span class="badge">{{ c.class }}</span>
+              </summary>
+              <div class="card-body">
+                <h3 class="name">{{ c.name }}</h3>
+                <ul class="meta">
+                  <li><strong>Faction:</strong> {{ c.faction }}</li>
+                  <li><strong>Origin:</strong> {{ c.startingLocation }}</li>
+                </ul>
+              </div>
+            </details>
+          </ng-container>
+        </div>
+      </div>
+    </section>
   `,
 })
 export class PlayersComponent {
@@ -58,7 +94,7 @@ export class PlayersComponent {
   readonly columns = [0, 1, 2];
   readonly factions = factions;
 
-  characters: Character[] = [
+  premadeCharacters: Character[] = [
     {
       name: "Thorn",
       gender: "Male",
@@ -157,17 +193,13 @@ export class PlayersComponent {
     },
   ];
 
+  /** for future use — dynamically added or loaded from storage */
+  customCharacters: Character[] = [];
+
   /** Keeps track of which card is open */
   open(i: number, ev: MouseEvent) {
     ev.preventDefault();
-
-    // If the same card is already open → close it
-    if (this.openIndex === i) {
-      this.openIndex = null;
-    } else {
-      // Otherwise, open the new one (and close any others)
-      this.openIndex = i;
-    }
+    this.openIndex = this.openIndex === i ? null : i;
   }
 
   /** Adds dynamic color themes */

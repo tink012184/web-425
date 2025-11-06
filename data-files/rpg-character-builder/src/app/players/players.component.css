@@ -111,3 +111,17 @@
   display: grid;
   gap: 0.25rem;
 }
+
+.placeholder {
+  grid-column: 1 / -1; /* span entire width of grid */
+  text-align: center;
+  font-style: italic;
+  color: var(--muted, #9aa4b2);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(182, 35, 215, 0.25);
+  border-radius: 0.8rem;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 0 12px rgba(182, 35, 215, 0.05) inset;
+  transition: all 0.3s ease;
+}

@@ -18,7 +18,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from "@angular/router";
             [routerLinkActiveOptions]="{ exact: true }"
           >
             <span class="logo">🛡️</span>
-            <h1 class="title">RPG Character Maker</h1></a
+            <h1 class="title">{{ title }}</h1></a
           >
         </div>
 
@@ -87,12 +87,13 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from "@angular/router";
           </ul>
         </nav>
         <p class="copyright">
-          © {{ year }} RPG Character Maker · Forge your legend
+          © {{ year }} RPG Character Builder · Forge your legend
         </p>
       </div>
     </footer>
   `,
 })
 export class AppComponent {
+  title = "RPG Character Builder";
   year = new Date().getFullYear();
 }

@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PlayersComponent } from './players.component';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { PlayersComponent } from "./players.component";
 
-describe('PlayersComponent', () => {
+describe("PlayersComponent", () => {
   let component: PlayersComponent;
   let fixture: ComponentFixture<PlayersComponent>;
 
@@ -15,12 +15,12 @@ describe('PlayersComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create PlayersComponent', () => {
+  it("should create PlayersComponent", () => {
     expect(component).toBeTruthy(); // Test b
   });
 
-  it('should render a list of 10 characters', () => {
-    const cards = fixture.nativeElement.querySelectorAll('.card');
-    expect(cards.length).toBe(10); // Test c
+  it("should render a list of at least 10 characters", () => {
+    const cards = fixture.nativeElement.querySelectorAll(".card");
+    expect(cards.length).toBeGreaterThanOrEqual(10); // Test c
   });
 });
