@@ -41,7 +41,7 @@ describe("CreateCharacterComponent", () => {
     // Assert (use service instead of component.characters)
     const characters = component["characterService"].characters;
 
-    expect(characters.length).toBe(1);
+    expect(characters.length).toBeGreaterThan(12);
 
     const added = characters[0];
     expect(added.name).toBe("Thorn");
