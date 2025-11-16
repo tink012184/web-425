@@ -1,15 +1,7 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Character, CharacterService } from "../character.service";
 import { factions } from "../shared/character-factions";
-
-interface Character {
-  name: string;
-  gender: "Male" | "Female" | "Other";
-  class: "Fighter" | "Wizard" | "Rogue" | "Druid";
-  faction: string;
-  startingLocation: string;
-  funFact: string;
-}
 
 @Component({
   selector: "app-players",
@@ -18,193 +10,128 @@ interface Character {
   styleUrls: ["./players.component.css"],
   template: `
     <section class="players">
-      <h2 class="section-title">Premade Characters</h2>
+      <h2 class="visually-hidden">Players</h2>
 
-      <div class="grid">
-        <div class="col" *ngFor="let col of columns; let colIdx = index">
-          <ng-container *ngFor="let c of premadeCharacters; let i = index">
-            <details
-              *ngIf="i % 3 === colIdx"
-              class="card"
-              [open]="openIndex === i"
-            >
-              <summary
-                class="card-summary"
-                [ngClass]="getClassColor(c.class)"
-                (click)="open(i, $event)"
-                [attr.aria-expanded]="openIndex === i"
+      <!-- Premade characters -->
+      <h3>Premade Characters</h3>
+
+      <ng-container
+        *ngIf="premadeCharacters.length > 0; else premadePlaceholder"
+      >
+        <div class="grid">
+          <div class="col" *ngFor="let col of columns; let colIdx = index">
+            <ng-container *ngFor="let c of premadeCharacters; let i = index">
+              <details
+                *ngIf="i % 3 === colIdx"
+                class="card"
+                [ngClass]="classCss(c.class)"
               >
-                <span class="badge">{{ c.class }}</span>
-              </summary>
-
-              <div class="card-body">
-                <h3 class="name">{{ c.name }}</h3>
-                <ul class="meta">
-                  <li><strong>Gender:</strong> {{ c.gender }}</li>
-                  <li><strong>Faction:</strong> {{ c.faction }}</li>
-                  <li><strong>Start:</strong> {{ c.startingLocation }}</li>
-                  <li><strong>Fun fact:</strong> {{ c.funFact }}</li>
-                </ul>
-              </div>
-            </details>
-          </ng-container>
+                <summary class="card-summary">
+                  <span class="badge" [ngClass]="classCss(c.class)">
+                    {{ c.class }}
+                  </span>
+                </summary>
+                <div class="card-body">
+                  <h4 class="name">{{ c.name }}</h4>
+                  <ul class="meta">
+                    <li><strong>Gender:</strong> {{ c.gender }}</li>
+                    <li>
+                      <strong>Faction:</strong>
+                      {{ c.faction || "Unaffiliated" }}
+                    </li>
+                    <li>
+                      <strong>Starting Location:</strong>
+                      {{ c.startingLocation || "Unknown" }}
+                    </li>
+                    <li>
+                      <strong>Fun Fact:</strong>
+                      {{ c.funFact || "To be discovered..." }}
+                    </li>
+                  </ul>
+                </div>
+              </details>
+            </ng-container>
+          </div>
         </div>
-      </div>
-    </section>
+      </ng-container>
 
-    <!--  Later this section will show user-created ones -->
-    <section class="players custom">
-      <h2 class="section-title">Custom Characters</h2>
+      <ng-template #premadePlaceholder>
+        <p class="placeholder">
+          No premade characters found. Add some seed characters to the
+          CharacterService.
+        </p>
+      </ng-template>
 
-      <p *ngIf="!customCharacters.length" class="placeholder">
-        No custom characters yet. Create your own hero to begin your journey!
-      </p>
+      <!-- Created characters -->
+      <h3 style="margin-top: 2rem;">Created Characters</h3>
 
-      <div class="grid" *ngIf="customCharacters.length">
-        <div class="col" *ngFor="let col of columns; let colIdx = index">
-          <ng-container *ngFor="let c of customCharacters; let i = index">
-            <details
-              *ngIf="i % 3 === colIdx"
-              class="card custom-card"
-              [open]="openIndex === i + premadeCharacters.length"
-            >
-              <summary
-                class="card-summary"
-                [ngClass]="getClassColor(c.class)"
-                (click)="open(i + premadeCharacters.length, $event)"
+      <ng-container
+        *ngIf="createdCharacters.length > 0; else createdPlaceholder"
+      >
+        <div class="grid">
+          <div class="col" *ngFor="let col of columns; let colIdx = index">
+            <ng-container *ngFor="let c of createdCharacters; let i = index">
+              <details
+                *ngIf="i % 3 === colIdx"
+                class="card"
+                [ngClass]="classCss(c.class)"
               >
-                <span class="badge">{{ c.class }}</span>
-              </summary>
-              <div class="card-body">
-                <h3 class="name">{{ c.name }}</h3>
-                <ul class="meta">
-                  <li><strong>Faction:</strong> {{ c.faction }}</li>
-                  <li><strong>Origin:</strong> {{ c.startingLocation }}</li>
-                </ul>
-              </div>
-            </details>
-          </ng-container>
+                <summary class="card-summary">
+                  <span class="badge" [ngClass]="classCss(c.class)">
+                    {{ c.class }}
+                  </span>
+                </summary>
+                <div class="card-body">
+                  <h4 class="name">{{ c.name }}</h4>
+                  <ul class="meta">
+                    <li><strong>Gender:</strong> {{ c.gender }}</li>
+                    <li>
+                      <strong>Faction:</strong>
+                      {{ c.faction || "Unaffiliated" }}
+                    </li>
+                    <li>
+                      <strong>Starting Location:</strong>
+                      {{ c.startingLocation || "Unknown" }}
+                    </li>
+                    <li>
+                      <strong>Fun Fact:</strong>
+                      {{ c.funFact || "To be discovered..." }}
+                    </li>
+                  </ul>
+                </div>
+              </details>
+            </ng-container>
+          </div>
         </div>
-      </div>
+      </ng-container>
+
+      <ng-template #createdPlaceholder>
+        <p class="placeholder">
+          No created characters yet. Visit the Create Character page to add one.
+        </p>
+      </ng-template>
     </section>
   `,
 })
 export class PlayersComponent {
-  openIndex: number | null = null;
-  readonly columns = [0, 1, 2];
-  readonly factions = factions;
+  factions = factions;
+  columns = [0, 1, 2];
 
-  premadeCharacters: Character[] = [
-    {
-      name: "Thorn",
-      gender: "Male",
-      class: "Fighter",
-      faction: "The Iron Brotherhood",
-      startingLocation: "Ironhold",
-      funFact: "Once single-handedly defeated a dragon.",
-    },
-    {
-      name: "Lyra",
-      gender: "Female",
-      class: "Wizard",
-      faction: "The Arcane Order",
-      startingLocation: "Moonspire",
-      funFact: "Memorized 500 arcane runes.",
-    },
-    {
-      name: "Kestrel",
-      gender: "Other",
-      class: "Rogue",
-      faction: "The Silent Knives",
-      startingLocation: "Glimmerdeep",
-      funFact: "Can pick any lock in seconds.",
-    },
-    {
-      name: "Bram",
-      gender: "Male",
-      class: "Fighter",
-      faction: "The Iron Brotherhood",
-      startingLocation: "Highwatch",
-      funFact: "Afraid of chickens.",
-    },
-    {
-      name: "Seraphine",
-      gender: "Female",
-      class: "Wizard",
-      faction: "The Arcane Order",
-      startingLocation: "Verdance",
-      funFact: "Brews legendary tea.",
-    },
-    {
-      name: "Nyx",
-      gender: "Other",
-      class: "Rogue",
-      faction: "The Silent Knives",
-      startingLocation: "Duskhaven",
-      funFact: "Speaks twelve dialects.",
-    },
-    {
-      name: "Garruk",
-      gender: "Male",
-      class: "Fighter",
-      faction: "The Iron Brotherhood",
-      startingLocation: "Frostfall",
-      funFact: "Won 30 arm-wrestling matches.",
-    },
-    {
-      name: "Iris",
-      gender: "Female",
-      class: "Wizard",
-      faction: "The Arcane Order",
-      startingLocation: "Skypier",
-      funFact: "Paints with starlight.",
-    },
-    {
-      name: "Vale",
-      gender: "Other",
-      class: "Rogue",
-      faction: "The Silent Knives",
-      startingLocation: "Market Row",
-      funFact: "Never leaves footprints.",
-    },
-    {
-      name: "Elowen",
-      gender: "Female",
-      class: "Druid",
-      faction: "The Nature's Guardians",
-      startingLocation: "Evershade Grove",
-      funFact: "Communes daily with the ancient trees.",
-    },
-    {
-      name: "Thalor",
-      gender: "Male",
-      class: "Druid",
-      faction: "The Nature's Guardians",
-      startingLocation: "Whisperwind Glade",
-      funFact: "Can summon roots to entangle his foes during combat.",
-    },
-    {
-      name: "Maris",
-      gender: "Other",
-      class: "Druid",
-      faction: "The Nature's Guardians",
-      startingLocation: "Silvermist Hollow",
-      funFact: "Tends to wounded creatures and can heal plants with song.",
-    },
-  ];
+  constructor(private characterService: CharacterService) {}
 
-  /** for future use — dynamically added or loaded from storage */
-  customCharacters: Character[] = [];
-
-  /** Keeps track of which card is open */
-  open(i: number, ev: MouseEvent) {
-    ev.preventDefault();
-    this.openIndex = this.openIndex === i ? null : i;
+  get premadeCharacters(): Character[] {
+    // characters without isCustom (or false) are treated as premade
+    return this.characterService.characters.filter((c) => !c.isCustom);
   }
 
-  /** Adds dynamic color themes */
-  getClassColor(charClass: string) {
-    switch (charClass) {
+  get createdCharacters(): Character[] {
+    // characters with isCustom === true are created in the app
+    return this.characterService.characters.filter((c) => c.isCustom);
+  }
+
+  // Map the character's class to your CSS class names
+  classCss(cls: string): string {
+    switch (cls) {
       case "Fighter":
         return "fighter";
       case "Wizard":
@@ -217,6 +144,4 @@ export class PlayersComponent {
         return "";
     }
   }
-
-  trackByName = (_: number, c: Character) => c.name;
 }
