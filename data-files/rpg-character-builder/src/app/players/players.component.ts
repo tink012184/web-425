@@ -16,12 +16,30 @@ import {
       <!-- PREMADE CHARACTERS -->
       <h2>Premade Characters</h2>
       <div class="grid">
-        <div class="card" *ngFor="let c of premadeCharacters">
-          <h3>{{ c.name }} ({{ c.class }} - {{ c.gender }})</h3>
-          <p><strong>Faction:</strong> {{ c.faction }}</p>
-          <p><strong>Starting Location:</strong> {{ c.startingLocation }}</p>
-          <p><strong>Fun Fact:</strong> {{ c.funFact }}</p>
-        </div>
+        <details class="card" *ngFor="let c of premadeCharacters">
+          <summary class="card-summary">
+            <span class="badge" [ngClass]="getClassBadge(c.class)">
+              {{ c.name }} • {{ c.class }}
+            </span>
+          </summary>
+
+          <div class="card-body">
+            <p class="name">{{ c.name }}</p>
+            <ul class="meta">
+              <li><strong>Gender:</strong> {{ c.gender }}</li>
+              <li *ngIf="c.faction">
+                <strong>Faction:</strong> {{ c.faction }}
+              </li>
+              <li *ngIf="c.startingLocation">
+                <strong>Starting Location:</strong>
+                {{ c.startingLocation }}
+              </li>
+              <li *ngIf="c.funFact">
+                <strong>Fun Fact:</strong> {{ c.funFact }}
+              </li>
+            </ul>
+          </div>
+        </details>
       </div>
 
       <!-- CREATED CHARACTERS -->
@@ -29,16 +47,36 @@ import {
         <h2>Created Characters</h2>
 
         <div class="grid" *ngIf="createdCharacters.length > 0; else noCreated">
-          <div class="card" *ngFor="let c of createdCharacters">
-            <h3>{{ c.name }} ({{ c.class }} - {{ c.gender }})</h3>
-            <p><strong>Faction:</strong> {{ c.faction }}</p>
-            <p><strong>Starting Location:</strong> {{ c.startingLocation }}</p>
-            <p><strong>Fun Fact:</strong> {{ c.funFact }}</p>
-          </div>
+          <details class="card" *ngFor="let c of createdCharacters">
+            <summary class="card-summary">
+              <span class="badge" [ngClass]="getClassBadge(c.class)">
+                {{ c.name }} • {{ c.class }}
+              </span>
+            </summary>
+
+            <div class="card-body">
+              <p class="name">{{ c.name }}</p>
+              <ul class="meta">
+                <li><strong>Gender:</strong> {{ c.gender }}</li>
+                <li *ngIf="c.faction">
+                  <strong>Faction:</strong> {{ c.faction }}
+                </li>
+                <li *ngIf="c.startingLocation">
+                  <strong>Starting Location:</strong>
+                  {{ c.startingLocation }}
+                </li>
+                <li *ngIf="c.funFact">
+                  <strong>Fun Fact:</strong> {{ c.funFact }}
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
 
         <ng-template #noCreated>
-          <p>No created characters yet. Visit the character creator to add one!</p>
+          <p class="placeholder">
+            No created characters yet. Visit the Character Creator to add one!
+          </p>
         </ng-template>
       </section>
     </section>
@@ -50,8 +88,24 @@ export class PlayersComponent {
   createdCharacters: Character[] = [];
 
   constructor(private characterService: CharacterService) {
-    // pull data from the combined CharacterService
     this.premadeCharacters = this.characterService.premadeCharacters;
     this.createdCharacters = this.characterService.createdCharacters;
+  }
+
+  // Map the character class ("Fighter", "Wizard", etc.) to the CSS
+  // badge class names (fighter, wizard, rogue, druid).
+  getClassBadge(cls: Character['class']): string {
+    switch (cls) {
+      case 'Fighter':
+        return 'fighter';
+      case 'Wizard':
+        return 'wizard';
+      case 'Rogue':
+        return 'rogue';
+      case 'Druid':
+        return 'druid';
+      default:
+        return '';
+    }
   }
 }
