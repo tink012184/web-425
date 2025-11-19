@@ -105,12 +105,25 @@ import { factions } from "../shared/character-factions";
         </div>
       </ng-container>
 
-      <ng-template #createdPlaceholder>
-        <p class="placeholder">
-          No created characters yet. Visit the Create Character page to add one.
-        </p>
-      </ng-template>
-    </section>
+      <!-- Created Characters section on Players page -->
+<section class="created-characters">
+  <h2>Created Characters</h2>
+
+  <!-- If there are created characters, show them -->
+  <div class="grid" *ngIf="createdCharacters.length > 0; else noCreated">
+    <div class="card" *ngFor="let c of createdCharacters">
+      <h3>{{ c.name }} ({{ c.class }} - {{ c.gender }})</h3>
+      <p><strong>Faction:</strong> {{ c.faction }}</p>
+      <p><strong>Starting Location:</strong> {{ c.startingLocation }}</p>
+      <p><strong>Fun Fact:</strong> {{ c.funFact }}</p>
+    </div>
+  </div>
+
+  <!-- Fallback when there are none -->
+  <ng-template #noCreated>
+    <p>No created characters yet. Visit the Character Creator to add one!</p>
+  </ng-template>
+</section>
   `,
 })
 export class PlayersComponent {
