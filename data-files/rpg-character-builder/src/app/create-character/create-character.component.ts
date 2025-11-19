@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { factions } from '../shared/character-factions';
+import { Character, CharacterService } from '../shared/character.service';
 
 export interface Character {
   name: string;
@@ -303,6 +304,7 @@ export interface Character {
     `,
   ],
 })
+
 export class CreateCharacterComponent {
   factions = factions;
 
@@ -315,15 +317,22 @@ export class CreateCharacterComponent {
     funFact: '',
   };
 
-  createdCharacters: Character[] = [];
+  constructor(private characterService: CharacterService) {}
+
+  // use the service’s array for the template
+  get createdCharacters(): Character[] {
+    return this.characterService.createdCharacters;
+  }
 
   onSubmit(form: NgForm): void {
     if (form.invalid) {
       return;
     }
 
-    this.createdCharacters.push({ ...this.model });
+    // 🔥 Save the new character in the shared service
+    this.characterService.addCharacter({ ...this.model });
 
+    // reset model with defaults
     this.model = {
       name: '',
       gender: 'Male',
