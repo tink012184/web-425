@@ -1,98 +1,67 @@
-// Hands-On 5.1 – TDD tests for Reactive Forms
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { CreateCharacterComponent } from "./create-character.component";
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CreateCharacterReactiveComponent } from './create-character-reactive.component';
-
-describe('CreateCharacterReactiveComponent', () => {
-  let component: CreateCharacterReactiveComponent;
-  let fixture: ComponentFixture<CreateCharacterReactiveComponent>;
+describe("CreateCharacterComponent", () => {
+  let component: CreateCharacterComponent;
+  let fixture: ComponentFixture<CreateCharacterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateCharacterReactiveComponent],
+      imports: [CreateCharacterComponent], // standalone component
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateCharacterReactiveComponent);
+    fixture = TestBed.createComponent(CreateCharacterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create the reactive character component', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it('should create a FormGroup with all expected controls', () => {
-    const form = component.characterForm;
+  it("should generate a random character ID between 1 and 1000 with no decimal places", () => {
+    const id = component.generateCharacterId();
 
-    expect(form.contains('name')).withContext('name control').toBeTrue();
-    expect(form.contains('gender')).withContext('gender control').toBeTrue();
-    expect(form.contains('class')).withContext('class control').toBeTrue();
-    expect(form.contains('faction')).withContext('faction control').toBeTrue();
-    expect(form.contains('startingLocation'))
-      .withContext('startingLocation control')
-      .toBeTrue();
-    expect(form.contains('funFact')).withContext('funFact control').toBeTrue();
+    expect(id).toBeGreaterThan(0);
+    expect(id).toBeLessThanOrEqual(1000);
+    expect(Number.isInteger(id)).toBeTrue();
   });
 
-  it('should be invalid when required fields are empty', () => {
-    component.characterForm.reset();
-    expect(component.characterForm.invalid).toBeTrue();
+  it("should add a character with correct customization", () => {
+    // Arrange
+    component.newCharacter = {
+      name: "Thorn",
+      gender: "Male",
+      class: "Fighter",
+    };
 
-    const name = component.characterForm.get('name');
-    const funFact = component.characterForm.get('funFact');
+    // Act
+    component.addCharacter();
 
-    expect(name?.hasError('required')).toBeTrue();
-    expect(funFact?.hasError('required')).toBeTrue();
+    // Assert (use service instead of component.characters)
+    const characters = component["characterService"].characters;
+
+    expect(characters.length).toBe(1);
+
+    const added = characters[0];
+    expect(added.name).toBe("Thorn");
+    expect(added.gender).toBe("Male");
+    expect(added.class).toBe("Fighter");
+    expect(added.id).toBeDefined();
+    expect(Number.isInteger(added.id)).toBeTrue();
   });
 
-  it('should require name to be at least 2 characters', () => {
-    const name = component.characterForm.get('name');
-    name?.setValue('A'); // too short
+  it("should reset all form fields to default Fighter/Male/blank values", () => {
+    component.newCharacter = {
+      name: "Temp Name",
+      gender: "Other",
+      class: "Rogue",
+    };
 
-    expect(name?.invalid).toBeTrue();
-    expect(name?.hasError('minlength')).toBeTrue();
+    component.resetForm();
 
-    name?.setValue('Ar'); // valid
-    expect(name?.valid).toBeTrue();
-  });
-
-  it('should be valid when all fields have correct values', () => {
-    component.characterForm.setValue({
-      name: 'Aria Nightwind',
-      gender: 'Female',
-      class: 'Wizard',
-      faction: 'Moonlit Order',
-      startingLocation: 'Silverkeep',
-      funFact: 'Collects enchanted quills.',
-    });
-
-    expect(component.characterForm.valid).toBeTrue();
-  });
-
-  it('should push a new character into createdCharacters on valid submit', () => {
-    component.characterForm.setValue({
-      name: 'Thorne Grayfall',
-      gender: 'Male',
-      class: 'Rogue',
-      faction: 'Shadow Syndicate',
-      startingLocation: 'Blackstone Alley',
-      funFact: 'Once stole a dragon’s scale and lived.',
-    });
-
-    component.onSubmit();
-
-    expect(component.createdCharacters.length).toBe(1);
-    expect(component.createdCharacters[0].name).toBe('Thorne Grayfall');
-  });
-
-  it('should not submit when form is invalid', () => {
-    component.characterForm.reset({
-      gender: 'Male',
-      class: 'Fighter',
-    });
-
-    component.onSubmit();
-
-    expect(component.createdCharacters.length).toBe(0);
+    expect(component.newCharacter.name).toBe("");
+    expect(component.newCharacter.gender).toBe("Male");
+    expect(component.newCharacter.class).toBe("Fighter");
   });
 });
