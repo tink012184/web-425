@@ -1,4 +1,6 @@
 // src/app/signin/signin.component.ts
+// Sign-in page (reactive form) that logs in and routes to /create-character
+
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -22,7 +24,11 @@ import { AuthService } from '../shared/auth.service';
       </p>
 
       <form [formGroup]="signinForm" (ngSubmit)="onSubmit()" novalidate>
-        <div class="form-group" [class.has-error]="username?.invalid && username?.touched">
+        <!-- Username -->
+        <div
+          class="form-group"
+          [class.has-error]="username?.invalid && username?.touched"
+        >
           <label for="username">Username</label>
           <input id="username" type="text" formControlName="username" />
           <div class="error" *ngIf="username?.touched && username?.invalid">
@@ -32,7 +38,11 @@ import { AuthService } from '../shared/auth.service';
           </div>
         </div>
 
-        <div class="form-group" [class.has-error]="password?.invalid && password?.touched">
+        <!-- Password -->
+        <div
+          class="form-group"
+          [class.has-error]="password?.invalid && password?.touched"
+        >
           <label for="password">Password</label>
           <input id="password" type="password" formControlName="password" />
           <div class="error" *ngIf="password?.touched && password?.invalid">
@@ -142,10 +152,10 @@ export class SignInComponent {
 
     const { username } = this.signinForm.value;
 
-    // Fake login for this assignment
+    // mark user as logged in (sets sessionStorage.loggedIn = 'true')
     this.auth.login(username);
 
-    // After successful sign-in → go to create-character page
-    this.router.navigate(['/create-reactive']);
+    // go to guarded character creator page
+    this.router.navigate(['/create-character']);
   }
 }

@@ -1,7 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { CreateCharacterComponent } from "./create-character.component";
+// src/app/create-character/create-character.component.spec.ts
 
-describe("CreateCharacterComponent", () => {
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CreateCharacterComponent } from './create-character.component';
+import { NgForm } from '@angular/forms';
+
+describe('CreateCharacterComponent', () => {
   let component: CreateCharacterComponent;
   let fixture: ComponentFixture<CreateCharacterComponent>;
 
@@ -15,53 +18,76 @@ describe("CreateCharacterComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create the character component', () => {
     expect(component).toBeTruthy();
   });
 
-  it("should generate a random character ID between 1 and 1000 with no decimal places", () => {
-    const id = component.generateCharacterId();
-
-    expect(id).toBeGreaterThan(0);
-    expect(id).toBeLessThanOrEqual(1000);
-    expect(Number.isInteger(id)).toBeTrue();
+  it('should initialize the model with default values', () => {
+    expect(component.model).toEqual({
+      name: '',
+      gender: 'Male',
+      class: 'Fighter',
+      faction: '',
+      startingLocation: '',
+      funFact: '',
+    });
   });
 
-  it("should add a character with correct customization", () => {
-    // Arrange
-    component.newCharacter = {
-      name: "Thorn",
-      gender: "Male",
-      class: "Fighter",
-    };
+  it('should not add a character when the form is invalid', () => {
+    const resetFormSpy = jasmine.createSpy('resetForm');
 
-    // Act
-    component.addCharacter();
+    const fakeForm = {
+      invalid: true,
+      resetForm: resetFormSpy,
+    } as unknown as NgForm;
 
-    // Assert (use service instead of component.characters)
-    const characters = component["characterService"].characters;
+    component.model.name = 'Test Name';
+    component.onSubmit(fakeForm);
 
-    expect(characters.length).toBe(1);
-
-    const added = characters[0];
-    expect(added.name).toBe("Thorn");
-    expect(added.gender).toBe("Male");
-    expect(added.class).toBe("Fighter");
-    expect(added.id).toBeDefined();
-    expect(Number.isInteger(added.id)).toBeTrue();
+    expect(component.createdCharacters.length).toBe(0);
+    expect(resetFormSpy).not.toHaveBeenCalled();
   });
 
-  it("should reset all form fields to default Fighter/Male/blank values", () => {
-    component.newCharacter = {
-      name: "Temp Name",
-      gender: "Other",
-      class: "Rogue",
+  it('should add a character and reset the form when valid', () => {
+    const resetFormSpy = jasmine.createSpy('resetForm');
+
+    const fakeForm = {
+      invalid: false,
+      resetForm: resetFormSpy,
+    } as unknown as NgForm;
+
+    component.model = {
+      name: 'Aria Nightwind',
+      gender: 'Female',
+      class: 'Wizard',
+      faction: 'Moonlit Order',
+      startingLocation: 'Silverkeep',
+      funFact: 'Collects enchanted quills.',
     };
 
-    component.resetForm();
+    component.onSubmit(fakeForm);
 
-    expect(component.newCharacter.name).toBe("");
-    expect(component.newCharacter.gender).toBe("Male");
-    expect(component.newCharacter.class).toBe("Fighter");
+    expect(component.createdCharacters.length).toBe(1);
+    const created = component.createdCharacters[0];
+
+    expect(created.name).toBe('Aria Nightwind');
+    expect(created.gender).toBe('Female');
+    expect(created.class).toBe('Wizard');
+    expect(created.faction).toBe('Moonlit Order');
+    expect(created.startingLocation).toBe('Silverkeep');
+    expect(created.funFact).toBe('Collects enchanted quills.');
+
+    // make sure reset was called with the reset model
+    expect(resetFormSpy).toHaveBeenCalledWith(component.model);
+
+    // after reset, model should be back to defaults
+    expect(component.model).toEqual({
+      name: '',
+      gender: 'Male',
+      class: 'Fighter',
+      faction: '',
+      startingLocation: '',
+      funFact: '',
+    });
   });
 });

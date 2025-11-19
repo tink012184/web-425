@@ -1,177 +1,338 @@
-import { Component } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FormsModule, NgForm } from "@angular/forms";
-import { Character, CharacterService } from "../character.service";
+// src/app/create-character/create-character.component.ts
+// Template-driven character creator with all required fields
 
-type NewCharacter = Pick<Character, "name" | "gender" | "class">;
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
+import { factions } from '../shared/character-factions';
+
+export interface Character {
+  name: string;
+  gender: 'Male' | 'Female' | 'Other';
+  class: 'Fighter' | 'Wizard' | 'Rogue' | 'Druid';
+  faction: string;
+  startingLocation: string;
+  funFact: string;
+}
 
 @Component({
-  selector: "app-create-character",
+  selector: 'app-create-character',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
     <section class="create-character">
-      <h1>Create a New Character</h1>
+      <h1>Character Creator</h1>
+      <p class="intro">
+        Build a new hero by filling out each section of the form. All fields are
+        required so your character feels complete.
+      </p>
 
-      <!-- Template-driven form -->
       <form
         #characterForm="ngForm"
-        (ngSubmit)="addCharacter(characterForm)"
-        class="character-form"
+        (ngSubmit)="onSubmit(characterForm)"
+        novalidate
       >
-        <label for="name">Name</label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          required
-          [(ngModel)]="newCharacter.name"
-        />
-
-        <label for="gender">Gender</label>
-        <select
-          id="gender"
-          name="gender"
-          required
-          [(ngModel)]="newCharacter.gender"
+        <!-- Name -->
+        <div
+          class="form-group"
+          [class.has-error]="name.invalid && name.touched"
         >
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
+          <label for="name">Name</label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            required
+            minlength="2"
+            maxlength="40"
+            [(ngModel)]="model.name"
+            #name="ngModel"
+          />
+          <div class="error" *ngIf="name.touched && name.invalid">
+            <span *ngIf="name.errors?.['required']">Name is required.</span>
+            <span *ngIf="name.errors?.['minlength']">
+              Name must be at least 2 characters.
+            </span>
+            <span *ngIf="name.errors?.['maxlength']">
+              Name cannot be more than 40 characters.
+            </span>
+          </div>
+        </div>
 
-        <label for="class">Class</label>
-        <select
-          id="class"
-          name="class"
-          required
-          [(ngModel)]="newCharacter.class"
+        <!-- Gender -->
+        <div
+          class="form-group"
+          [class.has-error]="gender.invalid && gender.touched"
         >
-          <option value="Fighter">Fighter</option>
-          <option value="Wizard">Wizard</option>
-          <option value="Rogue">Rogue</option>
-          <option value="Druid">Druid</option>
-        </select>
+          <label for="gender">Gender</label>
+          <select
+            id="gender"
+            name="gender"
+            required
+            [(ngModel)]="model.gender"
+            #gender="ngModel"
+          >
+            <option [ngValue]="'Male'">Male</option>
+            <option [ngValue]="'Female'">Female</option>
+            <option [ngValue]="'Other'">Other</option>
+          </select>
+          <div class="error" *ngIf="gender.touched && gender.invalid">
+            <span *ngIf="gender.errors?.['required']">
+              Gender is required.
+            </span>
+          </div>
+        </div>
+
+        <!-- Class -->
+        <div
+          class="form-group"
+          [class.has-error]="charClass.invalid && charClass.touched"
+        >
+          <label for="class">Class</label>
+          <select
+            id="class"
+            name="class"
+            required
+            [(ngModel)]="model.class"
+            #charClass="ngModel"
+          >
+            <option [ngValue]="'Fighter'">Fighter</option>
+            <option [ngValue]="'Wizard'">Wizard</option>
+            <option [ngValue]="'Rogue'">Rogue</option>
+            <option [ngValue]="'Druid'">Druid</option>
+          </select>
+          <div class="error" *ngIf="charClass.touched && charClass.invalid">
+            <span *ngIf="charClass.errors?.['required']">
+              Class is required.
+            </span>
+          </div>
+        </div>
+
+        <!-- Faction -->
+        <div
+          class="form-group"
+          [class.has-error]="faction.invalid && faction.touched"
+        >
+          <label for="faction">Faction</label>
+          <select
+            id="faction"
+            name="faction"
+            required
+            [(ngModel)]="model.faction"
+            #faction="ngModel"
+          >
+            <option [ngValue]="''" disabled>Select a faction</option>
+            <option *ngFor="let f of factions" [ngValue]="f.name">
+              {{ f.name }}
+            </option>
+          </select>
+          <div class="error" *ngIf="faction.touched && faction.invalid">
+            <span *ngIf="faction.errors?.['required']">
+              Faction is required.
+            </span>
+          </div>
+        </div>
+
+        <!-- Starting Location -->
+        <div
+          class="form-group"
+          [class.has-error]="
+            startingLocation.invalid && startingLocation.touched
+          "
+        >
+          <label for="startingLocation">Starting Location</label>
+          <input
+            id="startingLocation"
+            name="startingLocation"
+            type="text"
+            required
+            minlength="2"
+            [(ngModel)]="model.startingLocation"
+            #startingLocation="ngModel"
+          />
+          <div
+            class="error"
+            *ngIf="startingLocation.touched && startingLocation.invalid"
+          >
+            <span *ngIf="startingLocation.errors?.['required']">
+              Starting location is required.
+            </span>
+            <span *ngIf="startingLocation.errors?.['minlength']">
+              Starting location must be at least 2 characters.
+            </span>
+          </div>
+        </div>
+
+        <!-- Fun Fact -->
+        <div
+          class="form-group"
+          [class.has-error]="funFact.invalid && funFact.touched"
+        >
+          <label for="funFact">Fun Fact</label>
+          <textarea
+            id="funFact"
+            name="funFact"
+            rows="3"
+            required
+            maxlength="200"
+            [(ngModel)]="model.funFact"
+            #funFact="ngModel"
+          ></textarea>
+          <div class="error" *ngIf="funFact.touched && funFact.invalid">
+            <span *ngIf="funFact.errors?.['required']">
+              Fun fact is required.
+            </span>
+            <span *ngIf="funFact.errors?.['maxlength']">
+              Fun fact cannot be more than 200 characters.
+            </span>
+          </div>
+        </div>
 
         <button type="submit" [disabled]="characterForm.invalid">
           Create Character
         </button>
       </form>
 
-      <!-- Show ONLY created (custom) characters -->
-      <section class="character-list">
+      <!-- Created characters preview -->
+      <section class="created-list" *ngIf="createdCharacters.length > 0">
         <h2>Created Characters</h2>
-
-        <table *ngIf="createdCharacters.length > 0; else noCharacters">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Gender</th>
-              <th>Class</th>
-              <th>Faction</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let c of createdCharacters">
-              <td>{{ c.id }}</td>
-              <td>{{ c.name }}</td>
-              <td>{{ c.gender }}</td>
-              <td>{{ c.class }}</td>
-              <td>{{ c.faction || "Unaffiliated" }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <ng-template #noCharacters>
-          <p>No created characters yet.</p>
-        </ng-template>
+        <ul>
+          <li *ngFor="let c of createdCharacters">
+            <h3>{{ c.name }} ({{ c.class }} - {{ c.gender }})</h3>
+            <p>
+              <strong>Faction:</strong> {{ c.faction }} |
+              <strong>Starts in:</strong> {{ c.startingLocation }}
+            </p>
+            <p class="fun-fact">
+              <strong>Fun Fact:</strong> {{ c.funFact }}
+            </p>
+          </li>
+        </ul>
       </section>
     </section>
   `,
   styles: [
     `
       .create-character {
-        max-width: 800px;
+        max-width: 720px;
         margin: 0 auto;
-        padding: 1rem;
+        padding: 1.5rem;
       }
 
-      .character-form {
+      .create-character h1 {
+        margin-bottom: 0.5rem;
+      }
+
+      .intro {
+        margin-bottom: 1.5rem;
+      }
+
+      form {
         display: grid;
-        gap: 0.75rem;
+        gap: 1rem;
         margin-bottom: 2rem;
       }
 
-      .character-form label {
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group.has-error input,
+      .form-group.has-error select,
+      .form-group.has-error textarea {
+        border-color: #b91c1c;
+        outline-color: #b91c1c;
+      }
+
+      label {
         font-weight: 600;
+        margin-bottom: 0.25rem;
       }
 
-      .character-form input,
-      .character-form select,
-      .character-form button {
-        padding: 0.4rem;
+      input,
+      select,
+      textarea {
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        border: 1px solid #4b5563;
+        font: inherit;
       }
 
-      .character-list table {
-        width: 100%;
-        border-collapse: collapse;
+      .error {
+        color: #b91c1c;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
       }
 
-      .character-list th,
-      .character-list td {
-        border: 1px solid #ccc;
-        padding: 0.4rem;
-        text-align: left;
+      button[type='submit'] {
+        justify-self: flex-start;
+        padding: 0.5rem 1.25rem;
+        border-radius: 9999px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      button[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .created-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .created-list li {
+        border: 1px solid #1f2937;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .created-list h3 {
+        margin: 0 0 0.25rem;
+      }
+
+      .fun-fact {
+        margin: 0.25rem 0 0;
+        font-style: italic;
       }
     `,
   ],
 })
 export class CreateCharacterComponent {
-  newCharacter: NewCharacter = {
-    name: "",
-    gender: "Male",
-    class: "Fighter",
+  factions = factions;
+
+  model: Character = {
+    name: '',
+    gender: 'Male',
+    class: 'Fighter',
+    faction: '',
+    startingLocation: '',
+    funFact: '',
   };
 
-  constructor(private characterService: CharacterService) {}
+  createdCharacters: Character[] = [];
 
-  // ✔ Only show created characters here
-  get createdCharacters(): Character[] {
-    return this.characterService.characters.filter((c) => c.isCustom);
-  }
-
-  generateCharacterId(): number {
-    return Math.floor(Math.random() * 1000) + 1;
-  }
-
-  addCharacter(form?: NgForm): void {
-    if (!this.newCharacter.name.trim()) {
+  onSubmit(form: NgForm): void {
+    if (form.invalid) {
       return;
     }
 
-    const character: Character = {
-      id: this.generateCharacterId(),
-      ...this.newCharacter,
-      faction: "Unaffiliated",
-      startingLocation: "Unknown",
-      funFact: "Newly created adventurer.",
-      isCustom: true,
+    this.createdCharacters.push({ ...this.model });
+
+    this.model = {
+      name: '',
+      gender: 'Male',
+      class: 'Fighter',
+      faction: '',
+      startingLocation: '',
+      funFact: '',
     };
 
-    this.characterService.addCharacter(character);
-    this.resetForm(form);
-  }
-
-  resetForm(form?: NgForm): void {
-    this.newCharacter = {
-      name: "",
-      gender: "Male",
-      class: "Fighter",
-    };
-
-    if (form) {
-      form.resetForm(this.newCharacter);
-    }
+    form.resetForm(this.model);
   }
 }
