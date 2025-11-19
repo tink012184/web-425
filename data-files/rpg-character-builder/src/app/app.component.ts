@@ -39,7 +39,7 @@ import { CharacterService } from './shared/character.service';
   </li>
 
   <li *ngIf="isLoggedIn()">
-   <a href="#" (click)="logout()">Sign Out</a>
+   <a class="nav-link" (click)="logout()">Sign Out</a>
   </li>
   <li><a routerLink="/create-character" routerLinkActive="active">Create Character</a></li>
               <li>
@@ -71,7 +71,7 @@ import { CharacterService } from './shared/character.service';
   </li>
 
   <li *ngIf="isLoggedIn()">
-    <a href="#" (click)="logout()">Sign Out</a>
+    <a class="nav-link" (click)="logout()">Sign Out</a>
   </li>
             <li>
               <a routerLink="/create-character" routerLinkActive="active"
