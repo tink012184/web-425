@@ -16,31 +16,19 @@ import { AuthService } from './shared/auth.service';
     <header class="site-header">
       <h1>RPG Character Maker</h1>
 
-      <nav class="nav">
-        <a routerLink="/home" routerLinkActive="active">Home</a>
-        <a routerLink="/players" routerLinkActive="active">Players</a>
-        <a routerLink="/create-character" routerLinkActive="active">
-          Create Character
-        </a>
+      <nav class="nav"><ul>
+  <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
+  <li><a routerLink="/players" routerLinkActive="active">Players</a></li>
+  <li><a routerLink="/create-character" routerLinkActive="active">Create Character</a></li>
 
-        <!-- Show SIGN IN if NOT logged in -->
-        <a
-          routerLink="/signin"
-          routerLinkActive="active"
-          *ngIf="!isLoggedIn()"
-        >
-          Sign In
-        </a>
+  <li *ngIf="!isLoggedIn()">
+    <a routerLink="/signin" routerLinkActive="active">Sign In</a>
+  </li>
 
-        <!-- Show SIGN OUT if LOGGED IN -->
-        <button
-          *ngIf="isLoggedIn()"
-          class="signout-btn"
-          (click)="logout()"
-        >
-          Sign Out
-        </button>
-      </nav>
+  <li *ngIf="isLoggedIn()">
+    <button type="button" (click)="logout()">Sign Out</button>
+  </li>
+</ul> </nav>
     </header>
 
     <main class="content">
