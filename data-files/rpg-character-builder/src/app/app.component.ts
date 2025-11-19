@@ -50,7 +50,25 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from "@angular/router";
                 >Character Faction</a
               >
             </li>
-          </ul>
+            <!-- Show Sign In if NOT logged in -->
+       <li> <a
+          routerLink="/signin"
+          routerLinkActive="active"
+          *ngIf="!isLoggedIn()"
+        >
+          Sign In
+        </a>
+</li>
+        <!-- Show Sign Out if logged in -->
+     <li>   <button
+          type="button"
+          class="signout-btn"
+          *ngIf="isLoggedIn()"
+          (click)="onLogout()"
+        >
+          Sign Out
+        </button>
+       </li>   </ul>
         </nav>
       </div>
     </header>
@@ -96,4 +114,14 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from "@angular/router";
 export class AppComponent {
   title = "RPG Character Builder";
   year = new Date().getFullYear();
+  constructor(private auth: AuthService, private router: Router) {}
+
+  isLoggedIn(): boolean {
+    return this.auth.isLoggedIn();
+  }
+
+  onLogout(): void {
+    this.auth.logout();
+    this.router.navigate(['/signin']);
+}
 }

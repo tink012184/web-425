@@ -20,6 +20,7 @@ export const routes: Routes = [
     component: CreateCharacterReactiveComponent,
     canActivate: [authGuard],
   },
+  
 
   // Existing pages from earlier weeks
   { path: 'home', component: HomeComponent },
