@@ -117,7 +117,12 @@ export class PlayersComponent {
   factions = factions;
   columns = [0, 1, 2];
 
-  constructor(private characterService: CharacterService) {}
+
+  createdCharacters: Character[] = [];
+
+  constructor(private characterService: CharacterService) {
+      this.createdCharacters = this.characterService.createdCharacters
+  }
 
   get premadeCharacters(): Character[] {
     // characters without isCustom (or false) are treated as premade
