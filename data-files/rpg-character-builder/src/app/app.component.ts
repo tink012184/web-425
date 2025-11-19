@@ -7,6 +7,7 @@ import {
 } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './shared/auth.service';
+import { CharacterService } from './shared/character.service';
 
 @Component({
   selector: 'app-root',
@@ -33,15 +34,14 @@ import { AuthService } from './shared/auth.service';
     <ul>
   <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
   <li><a routerLink="/players" routerLinkActive="active">Players</a></li>
-  <li><a routerLink="/create-character" routerLinkActive="active">Create Character</a></li>
-
-  <li *ngIf="!isLoggedIn()">
+    <li *ngIf="!isLoggedIn()">
     <a routerLink="/signin" routerLinkActive="active">Sign In</a>
   </li>
 
   <li *ngIf="isLoggedIn()">
-    <button type="button" (click)="logout()">Sign Out</button>
+   <a href="#" (click)="logout()">Sign Out</a>
   </li>
+  <li><a routerLink="/create-character" routerLinkActive="active">Create Character</a></li>
               <li>
               <a routerLink="/create-guild" routerLinkActive="active"
                 >Create Guild</a
@@ -66,9 +66,13 @@ import { AuthService } from './shared/auth.service';
             <li>
               <a routerLink="/players" routerLinkActive="active">Players</a>
             </li>
-            <li>
-              <a routerLink="/signin" routerLinkActive="active">Sign In</a>
-            </li>
+  <li *ngIf="!isLoggedIn()">
+    <a routerLink="/signin" routerLinkActive="active">Sign In</a>
+  </li>
+
+  <li *ngIf="isLoggedIn()">
+    <a href="#" (click)="logout()">Sign Out</a>
+  </li>
             <li>
               <a routerLink="/create-character" routerLinkActive="active"
                 >Create Character</a
@@ -96,7 +100,7 @@ import { AuthService } from './shared/auth.service';
 export class AppComponent {
   title = "RPG Character Builder";
   year = new Date().getFullYear();
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, private characterService: CharacterService) {}
 
   // Used in the template
   isLoggedIn(): boolean {
@@ -105,6 +109,7 @@ export class AppComponent {
 
   logout(): void {
     this.auth.logout();
+    this.characterService.clearCharacters();
     this.router.navigate(['/signin']);
   }
 }
