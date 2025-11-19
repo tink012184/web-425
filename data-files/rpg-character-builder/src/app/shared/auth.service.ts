@@ -1,4 +1,3 @@
-// src/app/shared/auth.service.ts
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -8,7 +7,7 @@ export class AuthService {
   private loggedIn = false;
 
   constructor() {
-    // Restore from session storage (so refresh doesn't forget)
+    // Stay signed in while the tab is open (and after refresh)
     this.loggedIn = sessionStorage.getItem('loggedIn') === 'true';
   }
 
