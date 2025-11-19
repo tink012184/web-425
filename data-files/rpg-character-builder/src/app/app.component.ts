@@ -12,11 +12,25 @@ import { AuthService } from './shared/auth.service';
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  styleUrls: ['./app.component.css'],
   template: `
-    <header class="site-header">
-      <h1>RPG Character Maker</h1>
+      <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <a
+            routerLink="/"
+            class="brand-link"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <span class="logo">🛡️</span>
+            <h1 class="title">{{ title }}</h1></a
+          >
+        </div>
 
-      <nav class="nav"><ul>
+        <nav aria-label="Primary" class="nav">
+
+    <ul>
   <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
   <li><a routerLink="/players" routerLinkActive="active">Players</a></li>
   <li><a routerLink="/create-character" routerLinkActive="active">Create Character</a></li>
@@ -28,55 +42,60 @@ import { AuthService } from './shared/auth.service';
   <li *ngIf="isLoggedIn()">
     <button type="button" (click)="logout()">Sign Out</button>
   </li>
-</ul> </nav>
+              <li>
+              <a routerLink="/create-guild" routerLinkActive="active"
+                >Create Guild</a
+              >
+            </li>
+            <li>
+              <a routerLink="/character-faction" routerLinkActive="active"
+                >Character Faction</a
+              >
+            </li>
+</ul> </nav> </div>
     </header>
 
-    <main class="content">
+    <main class="container main">
       <router-outlet></router-outlet>
     </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <nav aria-label="Footer" class="nav nav-footer">
+          <ul>
+            <li>
+              <a routerLink="/players" routerLinkActive="active">Players</a>
+            </li>
+            <li>
+              <a routerLink="/signin" routerLinkActive="active">Sign In</a>
+            </li>
+            <li>
+              <a routerLink="/create-character" routerLinkActive="active"
+                >Create Character</a
+              >
+            </li>
+            <li>
+              <a routerLink="/create-guild" routerLinkActive="active"
+                >Create Guild</a
+              >
+            </li>
+            <li>
+              <a routerLink="/character-faction" routerLinkActive="active"
+                >Character Faction</a
+              >
+            </li>
+          </ul>
+        </nav>
+        <p class="copyright">
+          © {{ year }} RPG Character Builder · Forge your legend
+        </p>
+      </div>
+    </footer>
   `,
-  styles: [
-    `
-      .site-header {
-        padding: 1rem 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid #374151;
-      }
-
-      .nav {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-      }
-
-      a {
-        text-decoration: none;
-        font-weight: 500;
-        color: #111827;
-      }
-
-      a.active {
-        text-decoration: underline;
-      }
-
-      .signout-btn {
-        padding: 0.45rem 0.9rem;
-        border-radius: 9999px;
-        border: 1px solid #4b5563;
-        background-color: white;
-        cursor: pointer;
-        font-size: 0.9rem;
-      }
-
-      .content {
-        padding: 1.5rem;
-      }
-    `,
-  ],
 })
 export class AppComponent {
+  title = "RPG Character Builder";
+  year = new Date().getFullYear();
   constructor(private auth: AuthService, private router: Router) {}
 
   // Used in the template
