@@ -1,20 +1,8 @@
-// src/app/create-character/create-character.component.ts
-// Template-driven character creator with all required fields
-
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { factions } from '../shared/character-factions';
 import { Character, CharacterService } from '../shared/character.service';
-
-export interface Character {
-  name: string;
-  gender: 'Male' | 'Female' | 'Other';
-  class: 'Fighter' | 'Wizard' | 'Rogue' | 'Druid';
-  faction: string;
-  startingLocation: string;
-  funFact: string;
-}
 
 @Component({
   selector: 'app-create-character',
