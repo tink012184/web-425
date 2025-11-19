@@ -5,6 +5,7 @@ import { SigninComponent } from "./signin/signin.component";
 import { CreateCharacterComponent } from "./create-character/create-character.component";
 import { CreateGuildComponent } from "./create-guild/create-guild.component";
 import { CharacterFactionComponent } from "./character-faction/character-faction.component";
+import { CreateCharacterReactiveComponent } from './create-character-reactive/create-character-reactive.component';
 
 export const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -13,4 +14,5 @@ export const routes: Routes = [
   { path: "create-character", component: CreateCharacterComponent },
   { path: "create-guild", component: CreateGuildComponent },
   { path: "character-faction", component: CharacterFactionComponent },
+  { path: 'create-reactive', component: CreateCharacterReactiveComponent,},
 ];
