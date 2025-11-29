@@ -43,12 +43,17 @@ body,
 /* Ensure links never appear black or purple */
 .nav a:visited,
 .nav a:link,
-.nav a:active, .nav .nav-link:visited, .nav .nav-link:link, .nav .nav-link:active {
+.nav a:active,
+.nav .nav-link:visited,
+.nav .nav-link:link,
+.nav .nav-link:active {
   color: var(--ink);
 }
 
 .nav a:hover,
-.nav a:focus, .nav .nav-link:hover, .nav .nav-link:focus {
+.nav a:focus,
+.nav .nav-link:hover,
+.nav .nav-link:focus {
   color: #fff;
   box-shadow: 0 0 0 3px var(--glow);
   background: #121a2b;
@@ -180,7 +185,7 @@ body,
   gap: 0.85rem;
 }
 
-  @media (max-width: 1500px) {
+@media (max-width: 1500px) {
   .header-inner {
     flex-direction: row;
     align-items: right;
@@ -188,4 +193,20 @@ body,
   .nav ul {
     flex-wrap: nowrap;
   }
+}
+
+.auth-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-small {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--accent);
+  color: #000;
+  border: none;
 }
