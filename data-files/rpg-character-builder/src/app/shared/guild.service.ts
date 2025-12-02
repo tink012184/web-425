@@ -1,4 +1,3 @@
-// src/app/shared/guild.service.ts
 import { Injectable } from "@angular/core";
 
 export interface Guild {

@@ -1,16 +1,35 @@
-// src/app/create-character/create-character.component.spec.ts
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormsModule } from "@angular/forms";
+import { CreateCharacterComponent } from "./create-character.component";
+import { CharacterService, Character } from "../shared/character.service";
+import { GuildService } from "../shared/guild.service";
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CreateCharacterComponent } from './create-character.component';
-import { NgForm } from '@angular/forms';
-
-describe('CreateCharacterComponent', () => {
+describe("CreateCharacterComponent", () => {
   let component: CreateCharacterComponent;
   let fixture: ComponentFixture<CreateCharacterComponent>;
+  let characterServiceSpy: jasmine.SpyObj<CharacterService>;
+  let guildServiceStub: Partial<GuildService>;
 
   beforeEach(async () => {
+    characterServiceSpy = jasmine.createSpyObj<CharacterService>(
+      "CharacterService",
+      ["addCharacter"],
+      {
+        // optional: createdCharacters backing field
+        createdCharacters: [],
+      }
+    );
+
+    guildServiceStub = {
+      getGuilds: () => [],
+    } as Partial<GuildService>;
+
     await TestBed.configureTestingModule({
-      imports: [CreateCharacterComponent], // standalone component
+      imports: [CreateCharacterComponent, FormsModule],
+      providers: [
+        { provide: CharacterService, useValue: characterServiceSpy },
+        { provide: GuildService, useValue: guildServiceStub },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CreateCharacterComponent);
@@ -18,76 +37,80 @@ describe('CreateCharacterComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create the character component', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize the model with default values', () => {
-    expect(component.model).toEqual({
-      name: '',
-      gender: 'Male',
-      class: 'Fighter',
-      faction: '',
-      startingLocation: '',
-      funFact: '',
-    });
+  it("should initialize the model with default values", () => {
+    const expected: Character = {
+      name: "",
+      gender: "Male",
+      class: "Fighter",
+      faction: "",
+      startingLocation: "",
+      funFact: "",
+      guildName: "",
+    };
+
+    expect(component["model"]).toEqual(expected);
   });
 
-  it('should not add a character when the form is invalid', () => {
-    const resetFormSpy = jasmine.createSpy('resetForm');
-
-    const fakeForm = {
+  it("should not add a character when the form is invalid", () => {
+    const fakeForm: any = {
       invalid: true,
-      resetForm: resetFormSpy,
-    } as unknown as NgForm;
-
-    component.model.name = 'Test Name';
-    component.onSubmit(fakeForm);
-
-    expect(component.createdCharacters.length).toBe(0);
-    expect(resetFormSpy).not.toHaveBeenCalled();
-  });
-
-  it('should add a character and reset the form when valid', () => {
-    const resetFormSpy = jasmine.createSpy('resetForm');
-
-    const fakeForm = {
-      invalid: false,
-      resetForm: resetFormSpy,
-    } as unknown as NgForm;
-
-    component.model = {
-      name: 'Aria Nightwind',
-      gender: 'Female',
-      class: 'Wizard',
-      faction: 'Moonlit Order',
-      startingLocation: 'Silverkeep',
-      funFact: 'Collects enchanted quills.',
+      resetForm: jasmine.createSpy("resetForm"),
     };
 
     component.onSubmit(fakeForm);
 
-    expect(component.createdCharacters.length).toBe(1);
-    const created = component.createdCharacters[0];
+    expect(characterServiceSpy.addCharacter).not.toHaveBeenCalled();
+    expect(fakeForm.resetForm).not.toHaveBeenCalled();
+  });
 
-    expect(created.name).toBe('Aria Nightwind');
-    expect(created.gender).toBe('Female');
-    expect(created.class).toBe('Wizard');
-    expect(created.faction).toBe('Moonlit Order');
-    expect(created.startingLocation).toBe('Silverkeep');
-    expect(created.funFact).toBe('Collects enchanted quills.');
+  it("should add a character and reset the form when valid", () => {
+    // Arrange: set up a valid model
+    component["model"] = {
+      name: "Lissa",
+      gender: "Female",
+      class: "Wizard",
+      faction: "Moonlit Order",
+      startingLocation: "Silverkeep",
+      funFact: "Collects enchanted quills",
+      guildName: "Code Mages",
+    };
 
-    // make sure reset was called with the reset model
-    expect(resetFormSpy).toHaveBeenCalledWith(component.model);
+    const fakeForm: any = {
+      invalid: false,
+      resetForm: jasmine.createSpy("resetForm"),
+    };
 
-    // after reset, model should be back to defaults
-    expect(component.model).toEqual({
-      name: '',
-      gender: 'Male',
-      class: 'Fighter',
-      faction: '',
-      startingLocation: '',
-      funFact: '',
+    // Act
+    component.onSubmit(fakeForm);
+
+    // Assert addCharacter called with full model INCLUDING guildName
+    expect(characterServiceSpy.addCharacter).toHaveBeenCalledTimes(1);
+    expect(characterServiceSpy.addCharacter).toHaveBeenCalledWith({
+      name: "Lissa",
+      gender: "Female",
+      class: "Wizard",
+      faction: "Moonlit Order",
+      startingLocation: "Silverkeep",
+      funFact: "Collects enchanted quills",
+      guildName: "Code Mages",
     });
+
+    // Assert model reset to defaults (including guildName: "")
+    const expectedResetModel: Character = {
+      name: "",
+      gender: "Male",
+      class: "Fighter",
+      faction: "",
+      startingLocation: "",
+      funFact: "",
+      guildName: "",
+    };
+
+    expect(component["model"]).toEqual(expectedResetModel);
+    expect(fakeForm.resetForm).toHaveBeenCalledWith(expectedResetModel);
   });
 });

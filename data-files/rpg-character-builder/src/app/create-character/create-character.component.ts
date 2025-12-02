@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, NgForm } from '@angular/forms';
-import { factions } from '../shared/character-factions';
-import { Character, CharacterService } from '../shared/character.service';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule, NgForm } from "@angular/forms";
+import { factions } from "../shared/character-factions";
+import { Character, CharacterService } from "../shared/character.service";
+import { GuildService, Guild } from "../shared/guild.service";
 
 @Component({
-  selector: 'app-create-character',
+  selector: "app-create-character",
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
@@ -177,6 +178,17 @@ import { Character, CharacterService } from '../shared/character.service';
           </div>
         </div>
 
+        <!-- Guild dropdown (optional) -->
+        <div class="form-row">
+          <label for="guildName">Guild (optional)</label>
+          <select id="guildName" name="guildName" [(ngModel)]="model.guildName">
+            <option value="">No guild</option>
+            <option *ngFor="let g of guilds" [value]="g.guildName">
+              {{ g.guildName }} ({{ g.type || "Guild" }})
+            </option>
+          </select>
+        </div>
+
         <button type="submit" [disabled]="characterForm.invalid">
           Create Character
         </button>
@@ -192,9 +204,7 @@ import { Character, CharacterService } from '../shared/character.service';
               <strong>Faction:</strong> {{ c.faction }} |
               <strong>Starts in:</strong> {{ c.startingLocation }}
             </p>
-            <p class="fun-fact">
-              <strong>Fun Fact:</strong> {{ c.funFact }}
-            </p>
+            <p class="fun-fact"><strong>Fun Fact:</strong> {{ c.funFact }}</p>
           </li>
         </ul>
       </section>
@@ -254,7 +264,7 @@ import { Character, CharacterService } from '../shared/character.service';
         margin-top: 0.25rem;
       }
 
-      button[type='submit'] {
+      button[type="submit"] {
         justify-self: flex-start;
         padding: 0.5rem 1.25rem;
         border-radius: 9999px;
@@ -292,20 +302,29 @@ import { Character, CharacterService } from '../shared/character.service';
     `,
   ],
 })
-
 export class CreateCharacterComponent {
-  factions = factions;
-
+  // 🔹 Single source of truth for the form
   model: Character = {
-    name: '',
-    gender: 'Male',
-    class: 'Fighter',
-    faction: '',
-    startingLocation: '',
-    funFact: '',
+    name: "",
+    gender: "Male",
+    class: "Fighter",
+    faction: "",
+    startingLocation: "",
+    funFact: "",
+    guildName: "", // make sure Character interface has this
   };
 
-  constructor(private characterService: CharacterService) {}
+  factions = factions;
+
+  constructor(
+    private characterService: CharacterService,
+    private guildService: GuildService
+  ) {}
+
+  // always up-to-date list of guilds from the service
+  get guilds(): Guild[] {
+    return this.guildService.getGuilds();
+  }
 
   // use the service’s array for the template
   get createdCharacters(): Character[] {
@@ -317,17 +336,18 @@ export class CreateCharacterComponent {
       return;
     }
 
-    // 🔥 Save the new character in the shared service
+    // save the new character in the shared service
     this.characterService.addCharacter({ ...this.model });
 
     // reset model with defaults
     this.model = {
-      name: '',
-      gender: 'Male',
-      class: 'Fighter',
-      faction: '',
-      startingLocation: '',
-      funFact: '',
+      name: "",
+      gender: "Male",
+      class: "Fighter",
+      faction: "",
+      startingLocation: "",
+      funFact: "",
+      guildName: "",
     };
 
     form.resetForm(this.model);

@@ -1,12 +1,10 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  Character,
-  CharacterService,
-} from '../shared/character.service';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Character, CharacterService } from "../shared/character.service";
+import { GuildService, Guild } from "../shared/guild.service";
 
 @Component({
-  selector: 'app-players',
+  selector: "app-players",
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -79,33 +77,70 @@ import {
           </p>
         </ng-template>
       </section>
+
+      <!-- CREATED GUILDS -->
+      <section class="guilds-section">
+        <h2>Created Guilds</h2>
+
+        <p *ngIf="createdGuilds.length === 0" class="placeholder">
+          No guilds have been created yet.
+        </p>
+
+        <table *ngIf="createdGuilds.length > 0" class="guild-table">
+          <thead>
+            <tr>
+              <th>Guild Name</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Notification Preference</th>
+              <th>Accepted Terms</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let g of createdGuilds">
+              <td>{{ g.guildName }}</td>
+              <td>{{ g.description }}</td>
+              <td>{{ g.type || "—" }}</td>
+              <td>{{ g.notificationPreference }}</td>
+              <td>{{ g.acceptTerms ? "Yes" : "No" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
     </section>
   `,
-  styleUrls: ['./players.component.css'],
+  styleUrls: ["./players.component.css"],
 })
 export class PlayersComponent {
   premadeCharacters: Character[] = [];
   createdCharacters: Character[] = [];
 
-  constructor(private characterService: CharacterService) {
+  constructor(
+    private characterService: CharacterService,
+    private guildService: GuildService
+  ) {
     this.premadeCharacters = this.characterService.premadeCharacters;
     this.createdCharacters = this.characterService.createdCharacters;
   }
 
+  get createdGuilds(): Guild[] {
+    return this.guildService.getGuilds();
+  }
+
   // Map the character class ("Fighter", "Wizard", etc.) to the CSS
   // badge class names (fighter, wizard, rogue, druid).
-  getClassBadge(cls: Character['class']): string {
+  getClassBadge(cls: Character["class"]): string {
     switch (cls) {
-      case 'Fighter':
-        return 'fighter';
-      case 'Wizard':
-        return 'wizard';
-      case 'Rogue':
-        return 'rogue';
-      case 'Druid':
-        return 'druid';
+      case "Fighter":
+        return "fighter";
+      case "Wizard":
+        return "wizard";
+      case "Rogue":
+        return "rogue";
+      case "Druid":
+        return "druid";
       default:
-        return '';
+        return "";
     }
   }
 }
