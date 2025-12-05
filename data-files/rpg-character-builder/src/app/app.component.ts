@@ -47,7 +47,7 @@ import { CharacterService } from "./shared/character.service";
         <div class="auth-actions">
           <!-- Show Sign In when NOT logged in -->
           <button
-            *ngIf="!auth.isLoggedIn()"
+            *ngIf="!auth.isLoggedIn"
             class="btn-small"
             routerLink="/signin"
           >
@@ -55,11 +55,7 @@ import { CharacterService } from "./shared/character.service";
           </button>
 
           <!-- Show Sign Out when logged in -->
-          <button
-            *ngIf="auth.isLoggedIn()"
-            class="btn-small"
-            (click)="logout()"
-          >
+          <button *ngIf="auth.isLoggedIn" class="btn-small" (click)="logout()">
             Sign Out
           </button>
         </div>
@@ -99,7 +95,7 @@ export class AppComponent {
 
   // Used in the template
   isLoggedIn(): boolean {
-    return this.auth.isLoggedIn();
+    return this.auth.isLoggedIn;
   }
 
   logout(): void {

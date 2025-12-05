@@ -1,44 +1,81 @@
 import { Injectable } from "@angular/core";
-import { Router } from "@angular/router";
-import { GuildService } from "./guild.service";
+
+interface User {
+  username: string;
+  password: string;
+}
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService {
-  private loggedIn = false;
+  private readonly STORAGE_KEY = "rpg-current-user";
 
-  constructor(private router: Router, private guildService: GuildService) {
-    // Restore login state on refresh
-    this.loggedIn = sessionStorage.getItem("loggedIn") === "true";
+  // Simple hard-coded user list for the assignment
+  private readonly users: User[] = [
+    { username: "admin", password: "admin123" },
+    { username: "melissa", password: "wizard123" },
+  ];
+
+  private _isLoggedIn = false;
+  private _currentUser: string | null = null;
+
+  constructor() {
+    // Restore session from sessionStorage if present
+    const stored = sessionStorage.getItem(this.STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed?.username) {
+        this._isLoggedIn = true;
+        this._currentUser = parsed.username;
+      }
+    }
   }
 
-  login(username: string): void {
-    this.loggedIn = true;
+  /**
+   * Attempts to log in with the given username and password.
+   * Returns true on success, false on failure.
+   */
+  login(username: string, password: string): boolean {
+    const user = this.users.find(
+      (u) => u.username === username && u.password === password
+    );
+
+    if (!user) {
+      // ❌ invalid login
+      this._isLoggedIn = false;
+      this._currentUser = null;
+      sessionStorage.removeItem(this.STORAGE_KEY);
+      sessionStorage.removeItem("loggedIn"); // keep old flag clean
+      return false;
+    }
+
+    // ✅ valid login
+    this._isLoggedIn = true;
+    this._currentUser = user.username;
+
+    sessionStorage.setItem(
+      this.STORAGE_KEY,
+      JSON.stringify({ username: user.username })
+    );
+    // if anything else in your app checks this:
     sessionStorage.setItem("loggedIn", "true");
-    sessionStorage.setItem("username", username);
+
+    return true;
   }
 
   logout(): void {
-    // Update internal state
-    this.loggedIn = false;
-
-    // Remove session values
+    this._isLoggedIn = false;
+    this._currentUser = null;
+    sessionStorage.removeItem(this.STORAGE_KEY);
     sessionStorage.removeItem("loggedIn");
-    sessionStorage.removeItem("username");
-
-    // Clear guilds for this session
-    this.guildService.clearGuilds();
-
-    // Navigate back to signin page
-    this.router.navigate(["/signin"]);
   }
 
-  isLoggedIn(): boolean {
-    return this.loggedIn;
+  get isLoggedIn(): boolean {
+    return this._isLoggedIn;
   }
 
-  getUsername(): string | null {
-    return sessionStorage.getItem("username");
+  get currentUser(): string | null {
+    return this._currentUser;
   }
 }

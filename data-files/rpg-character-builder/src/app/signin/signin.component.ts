@@ -1,26 +1,29 @@
 // src/app/signin/signin.component.ts
 // Sign-in page (reactive form) that logs in and routes to /create-character
 
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
-} from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../shared/auth.service';
+} from "@angular/forms";
+import { Router } from "@angular/router";
+import { AuthService } from "../shared/auth.service";
 
 @Component({
-  selector: 'app-signin',
+  selector: "app-signin",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <section class="signin">
       <h1>Sign In</h1>
-      <p class="intro">
-        Please sign in to access the RPG Character Creator.
+      <p class="intro">Please sign in to access the RPG Character Creator.</p>
+
+      <!-- Auth error (wrong username/password) -->
+      <p class="auth-error" *ngIf="authError">
+        {{ authError }}
       </p>
 
       <form [formGroup]="signinForm" (ngSubmit)="onSubmit()" novalidate>
@@ -55,9 +58,7 @@ import { AuthService } from '../shared/auth.service';
           </div>
         </div>
 
-        <button type="submit" [disabled]="signinForm.invalid">
-          Sign In
-        </button>
+        <button type="submit" [disabled]="signinForm.invalid">Sign In</button>
       </form>
     </section>
   `,
@@ -70,7 +71,7 @@ import { AuthService } from '../shared/auth.service';
       }
 
       .intro {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
       }
 
       form {
@@ -106,7 +107,16 @@ import { AuthService } from '../shared/auth.service';
         margin-top: 0.25rem;
       }
 
-      button[type='submit'] {
+      .auth-error {
+        margin-bottom: 1rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        background-color: #fee2e2;
+        color: #991b1b;
+        font-weight: 600;
+      }
+
+      button[type="submit"] {
         justify-self: flex-start;
         padding: 0.5rem 1.25rem;
         border-radius: 9999px;
@@ -124,6 +134,7 @@ import { AuthService } from '../shared/auth.service';
 })
 export class SignInComponent {
   signinForm: FormGroup;
+  authError = "";
 
   constructor(
     private fb: FormBuilder,
@@ -131,31 +142,41 @@ export class SignInComponent {
     private router: Router
   ) {
     this.signinForm = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(4)]],
+      username: ["", Validators.required],
+      password: ["", [Validators.required, Validators.minLength(4)]],
     });
   }
 
   get username() {
-    return this.signinForm.get('username');
+    return this.signinForm.get("username");
   }
 
   get password() {
-    return this.signinForm.get('password');
+    return this.signinForm.get("password");
   }
 
   onSubmit(): void {
+    this.authError = "";
+
     if (this.signinForm.invalid) {
       this.signinForm.markAllAsTouched();
       return;
     }
 
-    const { username } = this.signinForm.value;
+    const { username, password } = this.signinForm.value;
 
-    // mark user as logged in (sets sessionStorage.loggedIn = 'true')
-    this.auth.login(username);
+    // Attempt real login
+    const success = this.auth.login(username, password);
 
-    // go to guarded character creator page
-    this.router.navigate(['/create-character']);
+    if (!success) {
+      // ❌ Wrong creds: show error, do NOT navigate
+      this.authError = "Invalid username or password.";
+      // optional: clear just the password field
+      this.password?.reset();
+      return;
+    }
+
+    // ✅ Logged in: go to guarded character creator page
+    this.router.navigate(["/create-character"]);
   }
 }
